@@ -2,6 +2,7 @@ package com.book.library.domain.user.service;
 
 import com.book.library.domain.user.entity.UserEntity;
 import com.book.library.domain.user.repository.UserRepository;
+import com.book.library.exception.CustomNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserEntity findUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
+        return userRepository.findByEmail(email).orElseThrow(()-> new CustomNotFoundException("User not found"));
     }
     @Transactional
     public void saveUser(UserEntity user){

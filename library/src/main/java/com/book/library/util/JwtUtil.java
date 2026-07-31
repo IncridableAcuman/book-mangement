@@ -76,7 +76,7 @@ public class JwtUtil {
     }
     public boolean validateToken(String token){
         try {
-            return !isTokenExpired(token);
+            return !isTokenExpired(token) && extractTokenExpirationFromToken(token)!=null;
         } catch (Exception e) {
             return false;
         }
