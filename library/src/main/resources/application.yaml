@@ -1,3 +1,32 @@
+server:
+  port: ${PORT}
+
 spring:
   application:
     name: library
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show_sql: true
+    properties:
+      hibernate:
+        format-sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+jwt:
+  secret: ${JWT_SECRET}
+  access_time: ${ACCESS_TIME}
+  refresh_time: ${REFRESH_TIME}
+
+file:
+  upload:
+    dir: ${UPLOAD_PATH}
