@@ -5,6 +5,7 @@ import com.book.library.domain.book.entity.BookEntity;
 import com.book.library.domain.book.entity.enums.Category;
 import com.book.library.domain.book.repository.BookRepository;
 import com.book.library.exception.CustomNotFoundException;
+import com.book.library.util.FileUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
+    private final FileUtil fileUtil;
 
     @Transactional
     public BookEntity saveBook(BookEntity book){
@@ -34,6 +36,7 @@ public class BookService {
         book.setCategory(request.getCategory());
         book.setPublishedDate(request.getPublishedDate());
         book.setPrice(request.getPrice());
+        book.setImage(fileUtil.saveFile(request.getImage()));
         // save
         BookEntity saved = saveBook(book);
         return BookDto.BookResponse.from(saved);
@@ -75,6 +78,9 @@ public class BookService {
         Optional.ofNullable(request.getCategory()).ifPresent(book::setCategory);
         Optional.of(request.getPublishedDate()).ifPresent(book::setPublishedDate);
         Optional.of(request.getPrice()).ifPresent(book::setPrice);
+        if (request.getImage()!=null){
+            book.setImage(fileUtil.saveFile(request.getImage()));
+        }
         // save
         saveBook(book);
         return BookDto.BookResponse.from(book);

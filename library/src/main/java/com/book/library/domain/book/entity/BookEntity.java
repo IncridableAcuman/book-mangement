@@ -42,4 +42,7 @@ public class BookEntity {
     @Column(name = "price",nullable = false)
     private double price;
 
+    @Column(name = "image")
+    private String image;
+
 }

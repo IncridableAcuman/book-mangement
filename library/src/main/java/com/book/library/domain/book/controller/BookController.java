@@ -18,7 +18,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookDto.BookResponse> createBook(@Valid @RequestBody BookDto.BookRequest request){
+    public ResponseEntity<BookDto.BookResponse> createBook(@Valid @ModelAttribute BookDto.BookRequest request){
         return ResponseEntity.ok(bookService.createBook(request));
     }
     @GetMapping
@@ -52,7 +52,7 @@ public class BookController {
         return ResponseEntity.ok("Book removed successfully: " + id);
     }
     @PatchMapping("/{id}")
-    public ResponseEntity<BookDto.BookResponse> editBook(@PathVariable Long id,@Valid @RequestBody BookDto.BookRequest request){
+    public ResponseEntity<BookDto.BookResponse> editBook(@PathVariable Long id,@Valid @ModelAttribute BookDto.BookRequest request){
         return ResponseEntity.status(200).body(bookService.editBook(id,request));
     }
 }
