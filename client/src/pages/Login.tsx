@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { BookOpen, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { BookOpen, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { loginSchema, type LoginData } from "../schema/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UseAuth } from "../context/AuthProvider";
 
 const Login: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<LoginData>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Bu yerda backendga login so'rovini yuborish logikasi bo'ladi
-    setTimeout(() => setIsLoading(false), 2000);
-  };
+  const { handleLogin,loading } = UseAuth();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center px-4 py-12 relative overflow-hidden">
@@ -36,13 +37,20 @@ const Login: React.FC = () => {
               <BookOpen className="w-6 h-6 text-white" />
             </div>
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Tizimga kirish</h1>
-          <p className="text-sm text-slate-400">Xush kelibsiz! Ma'lumotlaringizni kiriting</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
+            Tizimga kirish
+          </h1>
+          <p className="text-sm text-slate-400">
+            Xush kelibsiz! Ma'lumotlaringizni kiriting
+          </p>
         </div>
 
         {/* Login Card */}
         <div className="bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl shadow-black/50">
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form
+            onSubmit={handleSubmit((data) => handleLogin(data))}
+            className="space-y-5"
+          >
             {/* Email Field */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
@@ -54,13 +62,14 @@ const Login: React.FC = () => {
                 </div>
                 <input
                   type="email"
-                  required
+                  {...register("email")}
                   placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full pl-11 pr-4 py-3 bg-slate-950/50 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                 />
               </div>
+              <p className="text-xs text-red-600 mt-1">
+                {errors.email && errors.email.message}
+              </p>
             </div>
 
             {/* Password Field */}
@@ -74,13 +83,14 @@ const Login: React.FC = () => {
                 </div>
                 <input
                   type="password"
-                  required
+                  {...register("password")}
                   placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full pl-11 pr-4 py-3 bg-slate-950/50 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                 />
               </div>
+              <p className="text-xs text-red-600">
+                {errors.password && errors.password.message}
+              </p>
             </div>
 
             {/* Submit Button */}
@@ -88,10 +98,10 @@ const Login: React.FC = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               className="w-full mt-2 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
             >
-              {isLoading ? (
+              {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
@@ -104,8 +114,11 @@ const Login: React.FC = () => {
 
           {/* Footer Link */}
           <div className="mt-6 text-center text-sm text-slate-400">
-            Hisobingiz yo'qmi?{' '}
-            <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+            Hisobingiz yo'qmi?{" "}
+            <Link
+              to="/register"
+              className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+            >
               Ro'yxatdan o'tish
             </Link>
           </div>
