@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import type { IUser } from "../interface/user.interface";
 import type { LoginData, RegisterData } from "../schema/auth.schema";
 import { toast } from "react-toastify";
@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleLogout = async () => {
+    setLoading(true)
     try {
       await axiosInstance.post("/auth/logout");
       toast.success("Tizimdan chiqdingiz");
@@ -65,9 +66,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.log(error);
       toast.error("Tizimdan chiqishda xatolik yuz berdi.");
+      setLoading(false)
+    } finally{
+      setLoading(false)
     }
   };
-  
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { data } = await axiosInstance.get("/user");
+        setUser(data);
+      } catch (error) {
+        console.log(error);
+        toast.error("Foydalanuvchi ma'lumotlarini olishda xatolik");
+      }
+    };
+    fetchUser();
+  }, []);
 
   return (
     <>

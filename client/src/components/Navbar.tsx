@@ -2,8 +2,9 @@ import { BookOpen, LogOut, User } from "lucide-react";
 import { UseAuth } from "../context/AuthProvider";
 
 const Navbar = () => {
-  const { handleLogout } = UseAuth();
+  const { handleLogout,user } = UseAuth();
 
+  console.log(user)
 
   return (
     <>
