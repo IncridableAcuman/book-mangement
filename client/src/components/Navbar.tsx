@@ -4,7 +4,6 @@ import { UseAuth } from "../context/AuthProvider";
 const Navbar = () => {
   const { handleLogout,user } = UseAuth();
 
-  console.log(user)
 
   return (
     <>
@@ -22,7 +21,7 @@ const Navbar = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-sm">
               <User className="w-4 h-4 text-indigo-400" />
-              <span className="text-slate-300 font-medium">Foydalanuvchi</span>
+              <span className="text-slate-300 font-medium">{user?.username}</span>
             </div>
             <button
               title="Chiqish"

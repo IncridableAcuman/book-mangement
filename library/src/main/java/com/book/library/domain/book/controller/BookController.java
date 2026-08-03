@@ -38,19 +38,19 @@ public class BookController {
     public ResponseEntity<BookDto.BookResponse> getBookById(@PathVariable Long id){
         return ResponseEntity.status(200).body(bookService.getBookById(id));
     }
-    @GetMapping("/{author}/list")
+    @GetMapping("/filter/author/{author}")
     public ResponseEntity<List<BookDto.BookResponse>> getBookByAuthorList(@PathVariable String author){
         return ResponseEntity.ok(bookService.getBookByAuthor(author));
     }
-    @GetMapping("/{publishedDate}/list")
+    @GetMapping("/filter/author/{publishedDate}")
     public ResponseEntity<List<BookDto.BookResponse>> getBookByPublishedDateList(@PathVariable LocalDate publishedDate){
         return ResponseEntity.ok(bookService.getBookByPublishedDate(publishedDate));
     }
-    @GetMapping("/{category}/list")
+    @GetMapping("/filter/date/{category}")
     public ResponseEntity<List<BookDto.BookResponse>> getBookByCategoryList(@PathVariable Category category){
         return ResponseEntity.ok(bookService.getBookByCategory(category));
     }
-    @GetMapping("/{price}/list")
+    @GetMapping("/filter/price/{price}")
     public ResponseEntity<List<BookDto.BookResponse>> getBookByPriceList(@PathVariable double price){
         return ResponseEntity.ok(bookService.getBookByPrice(price));
     }
