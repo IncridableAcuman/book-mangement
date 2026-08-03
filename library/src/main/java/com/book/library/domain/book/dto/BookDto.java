@@ -1,13 +1,15 @@
 package com.book.library.domain.book.dto;
 
+import java.time.LocalDate;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.book.library.domain.book.entity.BookEntity;
 import com.book.library.domain.book.entity.enums.Category;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
 
 public class BookDto {
 
@@ -20,7 +22,7 @@ public class BookDto {
         private Category  category;
         @NotNull private LocalDate publishedDate;
         @NotNull private double price;
-        private MultipartFile image
+        private MultipartFile image;
     }
     public record BookResponse(
         Long id,

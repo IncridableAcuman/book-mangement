@@ -12,6 +12,7 @@ type AuthContextType = {
   setLoading: (load: boolean) => void;
   handleRegister: (data: RegisterData) => void;
   handleLogin: (data: LoginData) => void;
+  handleLogout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data } = await axiosInstance.post("/auth/login", formData);
       localStorage.setItem("accessToken", data.accessToken);
-      toast.success("Accountingizga muvofaqqiyatli kirdingiz");
+      toast.success("Tizimga muvofaqqiyatli kirdingiz");
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -55,6 +56,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      toast.success("Tizimdan chiqdingiz");
+      localStorage.removeItem("accessToken");
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      toast.error("Tizimdan chiqishda xatolik yuz berdi.");
+    }
+  };
+  
+
   return (
     <>
       <AuthContext.Provider
@@ -65,6 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setLoading,
           handleRegister,
           handleLogin,
+          handleLogout,
         }}
       >
         {children}
