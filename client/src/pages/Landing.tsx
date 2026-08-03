@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { BookOpen, ShieldCheck, Zap, ArrowRight, Library, Search } from 'lucide-react';
+import Footer from '../components/Footer';
 
 const Landing: React.FC = () => {
   return (
@@ -151,11 +152,7 @@ const Landing: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="py-8 border-t border-slate-900 text-center text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} LibFlow. Barcha huquqlar himoyalangan.</p>
-      </footer>
+      <Footer/>
     </div>
   );
 };

@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
             } catch (error) {
                 console.log(error);
                 localStorage.removeItem("accessToken");
-                window.location.href="/login"
+                window.location.href="/landing"
             }
         }
     },

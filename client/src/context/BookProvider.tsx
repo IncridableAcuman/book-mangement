@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import type IBook from "../interface/book.interface";
 import type { BookData } from "../schema/book.schema";
 import { toast } from "react-toastify";
@@ -9,6 +9,8 @@ type BookContextType = {
   setBook: (book: IBook | null) => void;
   books: IBook[];
   setBooks: (data: IBook[]) => void;
+  loading: boolean;
+  setLoading: (load: boolean) => void;
   handleCreateBook: (data: BookData) => void;
   getBook: (id: number) => void;
   filterBooks: (value: string | number, category: string) => void;
@@ -18,21 +20,28 @@ type BookContextType = {
 
 const BookContext = createContext<BookContextType | null>(null);
 
-const BookProvider = ({ children }: { children: React.ReactNode }) => {
+export const BookProvider = ({ children }: { children: React.ReactNode }) => {
   const [book, setBook] = useState<IBook | null>(null);
   const [books, setBooks] = useState<IBook[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleCreateBook = async (data: BookData) => {
+  const handleCreateBook = async (formData: BookData) => {
+    setLoading(true);
     try {
-      await axiosInstance.post("/book", data, {
+      const {data} = await axiosInstance.post("/book", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.error("Muvofaqqiyatli yaratildi");
+      setBook(data);
+      console.log(data)
+      toast.success("Muvofaqqiyatli yaratildi");
     } catch (error) {
       console.log(error);
       toast.error("Kitob yaratishda xatolik");
+      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -108,6 +117,8 @@ const BookProvider = ({ children }: { children: React.ReactNode }) => {
           filterBooks,
           deleteBook,
           editBook,
+          loading,
+          setLoading,
         }}
       >
         {children}
@@ -116,4 +127,8 @@ const BookProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default BookProvider;
+export const UseBook = () => {
+  const context = useContext(BookContext);
+  if (!context) throw new Error("This context only use with Book Provider");
+  return context;
+};

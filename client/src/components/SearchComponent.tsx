@@ -1,7 +1,16 @@
 import { Plus, Search } from "lucide-react";
 import { motion } from "framer-motion";
+import CreateDialog from "./CreateDialog";
+import { useState } from "react";
 
 const SearchComponent = () => {
+  const [isOpen,setIsOpen]=useState(false);
+  const onClose = ()=>{
+    setIsOpen(false);
+  }
+  const onOpen = ()=>{
+    setIsOpen(true)
+  }
   const userRole = "ADMIN";
   return (
     <>
@@ -20,6 +29,7 @@ const SearchComponent = () => {
         <div className="flex items-center gap-3 overflow-x-auto pb-2 md:pb-0">
           {userRole === "ADMIN" && (
             <motion.button
+            onClick={onOpen}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-xl shadow-lg shadow-indigo-600/25 flex items-center gap-2 shrink-0 transition-all"
@@ -28,6 +38,7 @@ const SearchComponent = () => {
               <span>Kitob Qo'shish</span>
             </motion.button>
           )}
+          <CreateDialog isOpen={isOpen} onClose={onClose}  />
         </div>
       </div>
     </>

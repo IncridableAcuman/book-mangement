@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await axiosInstance.post("/auth/logout");
       toast.success("Tizimdan chiqdingiz");
       localStorage.removeItem("accessToken");
-      navigate("/login");
+      navigate("/landing");
     } catch (error) {
       console.log(error);
       toast.error("Tizimdan chiqishda xatolik yuz berdi.");
