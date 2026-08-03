@@ -42,11 +42,11 @@ public class BookController {
     public ResponseEntity<List<BookDto.BookResponse>> getBookByAuthorList(@PathVariable String author){
         return ResponseEntity.ok(bookService.getBookByAuthor(author));
     }
-    @GetMapping("/filter/author/{publishedDate}")
+    @GetMapping("/filter/date/{publishedDate}")
     public ResponseEntity<List<BookDto.BookResponse>> getBookByPublishedDateList(@PathVariable LocalDate publishedDate){
         return ResponseEntity.ok(bookService.getBookByPublishedDate(publishedDate));
     }
-    @GetMapping("/filter/date/{category}")
+    @GetMapping("/filter/category/{category}")
     public ResponseEntity<List<BookDto.BookResponse>> getBookByCategoryList(@PathVariable Category category){
         return ResponseEntity.ok(bookService.getBookByCategory(category));
     }
