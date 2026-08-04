@@ -20,13 +20,11 @@ public class BookService {
     private final BookRepository bookRepository;
     private final FileUtil fileUtil;
 
-    @Transactional
-    public BookEntity saveBook(BookEntity book){
-       return bookRepository.save(book);
-    }
+
     public BookEntity findBookById(Long id){
         return bookRepository.findById(id).orElseThrow(()-> new CustomNotFoundException("Book not found: " + id));
     }
+    @Transactional
     public BookDto.BookResponse createBook(BookDto.BookRequest request){
         BookEntity book = new BookEntity();
         book.setTitle(request.getTitle());
@@ -38,8 +36,8 @@ public class BookService {
         book.setPrice(request.getPrice());
         book.setImage(fileUtil.saveFile(request.getImage()));
         // save
-        BookEntity saved = saveBook(book);
-        return BookDto.BookResponse.from(saved);
+        bookRepository.save(book);
+        return BookDto.BookResponse.from(book);
     }
     public List<BookDto.BookResponse> bookList(){
         List<BookEntity> books = bookRepository.findAll();
@@ -82,7 +80,7 @@ public class BookService {
             book.setImage(fileUtil.saveFile(request.getImage()));
         }
         // save
-        saveBook(book);
+        bookRepository.save(book);
         return BookDto.BookResponse.from(book);
     }
 }

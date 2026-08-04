@@ -1,19 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Book, CheckCircle2, XCircle, Edit3, Trash2, Bookmark } from 'lucide-react';
+import {  Edit3, Trash2, Bookmark } from 'lucide-react';
+import type IBook from '../interface/book.interface';
+import type { Role } from '../interface/user.interface';
 
-interface BookItem {
-  id: number;
-  title: string;
-  author: string;
-  category: string;
-  available: boolean;
-  coverImage?: string;
-}
 
 interface CardProps {
-  book: BookItem;
-  userRole?: 'ADMIN' | 'USER';
+  book: IBook;
+  userRole?: Role;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
   onAction?: (id: number) => void;
@@ -21,7 +15,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ 
   book, 
-  userRole = 'USER', 
+  userRole, 
   onEdit, 
   onDelete, 
   onAction 
@@ -35,10 +29,10 @@ const Card: React.FC<CardProps> = ({
       <div>
         {/* Muqova placeholder va Status Badge */}
         <div className="w-full h-48 bg-slate-950 rounded-xl mb-4 flex items-center justify-center border border-slate-800 relative overflow-hidden group-hover:border-indigo-500/50 transition-colors">
-          <Book className="w-12 h-12 text-slate-700 group-hover:text-indigo-400 transition-colors" />
-          
+          <img src={`http://localhost:8080/api/v1/files/${book.image}`} alt={book.title} />
+
           {/* Status Badge */}
-          <div className="absolute top-3 right-3">
+          {/* <div className="absolute top-3 right-3">
             {book.available ? (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm">
                 <CheckCircle2 className="w-3 h-3" /> Mavjud
@@ -48,7 +42,7 @@ const Card: React.FC<CardProps> = ({
                 <XCircle className="w-3 h-3" /> Olingan
               </span>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Kategoriya, Nomi va Muallif */}

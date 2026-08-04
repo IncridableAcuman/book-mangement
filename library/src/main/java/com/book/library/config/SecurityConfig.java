@@ -32,6 +32,7 @@ public class SecurityConfig {
                             auth
 
                                     .requestMatchers("/auth/**").permitAll()
+                                    .requestMatchers("/files/**").permitAll()
                                     .requestMatchers(HttpMethod.POST,"/book/**").hasRole("ADMIN")
                                     .requestMatchers(HttpMethod.DELETE,"/book/**").hasRole("ADMIN")
                                     .requestMatchers(HttpMethod.PATCH,"/book/**").hasRole("ADMIN")
