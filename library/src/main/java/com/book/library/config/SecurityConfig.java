@@ -24,20 +24,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http){
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors->cors.configurationSource(corsConfig.corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth->
-                            auth
-
-                                    .requestMatchers("/auth/**").permitAll()
-                                    .requestMatchers("/files/**").permitAll()
-                                    .requestMatchers(HttpMethod.POST,"/book/**").hasRole("ADMIN")
-                                    .requestMatchers(HttpMethod.DELETE,"/book/**").hasRole("ADMIN")
-                                    .requestMatchers(HttpMethod.PATCH,"/book/**").hasRole("ADMIN")
-                                    .anyRequest().authenticated()
-                        ).sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/book", "/book/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/book/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/book/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/book/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

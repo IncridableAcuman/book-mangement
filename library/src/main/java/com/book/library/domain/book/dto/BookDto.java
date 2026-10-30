@@ -2,28 +2,47 @@ package com.book.library.domain.book.dto;
 
 import java.time.LocalDate;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.book.library.domain.book.entity.BookEntity;
 import com.book.library.domain.book.entity.enums.Category;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class BookDto {
 
     @Data
-    public static class BookRequest{
-        @NotBlank private String title;
-        @NotBlank private String description;
-        @NotBlank String author;
-        @NotNull private int pageSize;
-        private Category  category;
-        @NotNull private LocalDate publishedDate;
-        @NotNull private double price;
-        private MultipartFile image;
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class BookRequest {
+        @NotBlank(message = "Title is required")
+        private String title;
+
+        @NotBlank(message = "Description is required")
+        private String description;
+
+        @NotBlank(message = "Author is required")
+        private String author;
+
+        @NotNull(message = "Page size is required")
+        private Integer pageSize;
+
+        private Category category;
+
+        @NotNull(message = "Published date is required")
+        private LocalDate publishedDate;
+
+        @NotNull(message = "Price is required")
+        private Double price;
+
+        // Fayllar lokal saqlanmaydi va majburiy emas. Ixtiyoriy muqova URL manzili.
+        private String image;
     }
+
     public record BookResponse(
         Long id,
         String title,
@@ -34,8 +53,8 @@ public class BookDto {
         LocalDate publishedDate,
         double price,
         String image
-    ){
-        public static BookResponse from(BookEntity book){
+    ) {
+        public static BookResponse from(BookEntity book) {
             return new BookResponse(
                     book.getId(),
                     book.getTitle(),

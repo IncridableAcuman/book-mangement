@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Upload, Plus, BookOpen } from "lucide-react";
+import { X, Plus, BookOpen, Image as ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -16,41 +16,30 @@ interface BookCreateDialogProps {
 }
 
 const CreateDialog: React.FC<BookCreateDialogProps> = ({ isOpen, onClose }) => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { handleCreateBook, loading } = UseBook();
 
   const {
     register,
     handleSubmit,
-    setValue,
+    reset,
+    watch,
     formState: { errors },
   } = useForm<BookData>({
     resolver: zodResolver(bookSchema),
+    defaultValues: {
+      category: "HISTORY",
+      image: ""
+    }
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setValue("image", file, { shouldValidate: true });
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
+  const watchImageUrl = watch("image");
 
   const onSubmit = async (data: BookData) => {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("author", data.author);
-    formData.append("pageSize", data.pageSize); // string holatida ketadi
-    formData.append("category", data.category);
-    formData.append("publishedDate", data.publishedDate);
-    formData.append("price", data.price); // string holatida ketadi
-
-    if (data.image) {
-      formData.append("image", data.image);
+    const success = await handleCreateBook(data);
+    if (success) {
+      reset();
+      onClose();
     }
-
-    await handleCreateBook(formData as unknown as BookData); // yoki providerdagi funksiyani FormData qabul qiladigan qilish
   };
 
   return (
@@ -81,7 +70,7 @@ const CreateDialog: React.FC<BookCreateDialogProps> = ({ isOpen, onClose }) => {
 
             {/* Modal Body / Form */}
             <form
-              onSubmit={handleSubmit((data) => onSubmit(data))}
+              onSubmit={handleSubmit(onSubmit)}
               className="p-6 space-y-4 max-h-[80vh] overflow-y-auto"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -169,7 +158,6 @@ const CreateDialog: React.FC<BookCreateDialogProps> = ({ isOpen, onClose }) => {
                     {...register("category")}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
                   >
-                    <option value="">Tanlang</option>
                     {BookCategoryEnum.options.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
@@ -219,35 +207,32 @@ const CreateDialog: React.FC<BookCreateDialogProps> = ({ isOpen, onClose }) => {
                 )}
               </div>
 
-              {/* Image Upload */}
+              {/* Image URL (Fayl shart emas, ixtiyoriy URL) */}
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
-                  Muqova rasmi
+                <label className="block text-xs font-medium text-slate-400 mb-1 flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Muqova rasmi URL (ixtiyoriy)</span>
                 </label>
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-800 border-dashed rounded-xl cursor-pointer bg-slate-950 hover:border-indigo-500/50 transition-colors overflow-hidden relative">
-                  {imagePreview ? (
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
+                <input
+                  type="url"
+                  {...register("image")}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  placeholder="https://images.unsplash.com/photo-..."
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Fayl yuklash shart emas. Bo'sh qoldirsangiz, avtomatik standart muqova o'rnatiladi.
+                </p>
+                {watchImageUrl && (
+                  <div className="mt-2 w-20 h-28 rounded-lg overflow-hidden border border-slate-800">
+                    <img 
+                      src={watchImageUrl} 
+                      alt="Muqova preview" 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400";
+                      }}
                     />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6 text-slate-400">
-                      <Upload className="w-6 h-6 mb-2 text-indigo-400" />
-                      <p className="text-xs">Rasm yuklash uchun bosing</p>
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </label>
-                {errors.image && (
-                  <span className="text-xs text-rose-400 mt-1 block">
-                    {errors.image.message as string}
-                  </span>
+                  </div>
                 )}
               </div>
 

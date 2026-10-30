@@ -2,7 +2,7 @@ import axios, { AxiosError, type InternalAxiosRequestConfig, type AxiosResponse,
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: true,
-    baseURL: "http://localhost:8080/api/v1"
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1"
 });
 
 axiosInstance.interceptors.request.use(
@@ -15,27 +15,33 @@ axiosInstance.interceptors.request.use(
     },
     (error: AxiosError) => Promise.reject(error)
 );
+
 axiosInstance.interceptors.response.use(
     (response: AxiosResponse) => response,
     async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & {
-            _retry: boolean
+            _retry?: boolean;
         };
-        if((error.response?.status===401 || error.response?.status===403) && !originalRequest._retry){
-            originalRequest._retry=true;
+        if ((error.response?.status === 401 || error.response?.status === 403) && originalRequest && !originalRequest._retry) {
+            originalRequest._retry = true;
             try {
-                const {data} = await axiosInstance.get("/auth/refresh");
+                const { data } = await axiosInstance.get("/auth/refresh");
                 const token = data.accessToken;
-                localStorage.setItem("accessToken",token);
-                originalRequest.headers.Authorization=`Bearer ${token}`;
-                return axiosInstance(originalRequest)
-            } catch (error) {
-                console.log(error);
+                if (token) {
+                    localStorage.setItem("accessToken", token);
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                    return axiosInstance(originalRequest);
+                }
+            } catch (refreshError) {
+                console.error("Token refresh failed:", refreshError);
                 localStorage.removeItem("accessToken");
-                window.location.href="/landing"
+                if (window.location.pathname !== "/login" && window.location.pathname !== "/landing" && window.location.pathname !== "/register") {
+                    window.location.href = "/landing";
+                }
             }
         }
-    },
-)
+        return Promise.reject(error);
+    }
+);
 
 export default axiosInstance;

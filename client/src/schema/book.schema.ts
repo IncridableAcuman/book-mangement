@@ -9,17 +9,15 @@ export const BookCategoryEnum = z.enum([
     "BIOGRAPHY"
 ]);
 
-
 export const bookSchema = z.object({
-    title: z.string().min(1, "Title is required"),
-    description: z.string().min(1, "Description is required"),
-    author: z.string().min(1, "Author is required"),
-
-    pageSize: z.string().min(1, "Page size is required"),
+    title: z.string().min(1, "Kitob nomi majburiy"),
+    description: z.string().min(1, "Tavsif majburiy"),
+    author: z.string().min(1, "Muallif majburiy"),
+    pageSize: z.union([z.string().min(1, "Sahifalar soni majburiy"), z.number()]),
     category: BookCategoryEnum,
-    publishedDate: z.string().min(1, "Published date is required"),
-    price: z.string().min(1, "Price is required"),
-    image: z.custom<File>((val) => val instanceof File, "Image is required")
+    publishedDate: z.string().min(1, "Nashr etilgan sana majburiy"),
+    price: z.union([z.string().min(1, "Narxi majburiy"), z.number()]),
+    image: z.string().optional().or(z.literal(""))
 });
 
 export type BookData = z.infer<typeof bookSchema>;
