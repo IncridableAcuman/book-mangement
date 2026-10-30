@@ -1,3 +1,5 @@
+version: "1"
+
 services:
   # Backend API Web Service (Spring Boot Docker)
   - type: web
@@ -10,7 +12,7 @@ services:
     healthCheckPath: /api/v1/book
     envVars:
       - key: PORT
-        value: 8080
+        value: "8080"
       - key: DB_URL
         value: jdbc:postgresql://ep-square-feather-b4z5xe0q-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require
       - key: DB_USER
@@ -24,16 +26,15 @@ services:
       - key: REFRESH_TIME
         value: "604800000"
       - key: ALLOWED_ORIGINS
-        value: "http://localhost:5173,https://*.onrender.com"
+        value: http://localhost:5173,https://*.onrender.com
 
   # Frontend Web Service / Static Site (React Vite)
   - type: web
     name: book-management-frontend
     runtime: static
-    buildCommand: cd client && npm install && npm run build
-    staticPublishPath: ./client/dist
-    plan: free
-    region: oregon
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         fromService:
